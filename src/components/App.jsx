@@ -2,18 +2,26 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import style from './ContactForm.module.css';
 import { ContactForm } from 'components/ContactForm';
+import { DeleteContact } from 'components/deleteContact';
 import { Filter } from 'components/Filter';
 import { ContactList } from 'components/ContactList';
 import { addContact, filteredItems } from '../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
+import { useGetContactsQuery } from '../redux/getContact';
+import { useCreateContactMutation } from '../redux/getContact';
 
 export function App() {
   const [name] = useState('');
   const [number] = useState('');
+  // const [isLoading] = useState(false);
 
   const dispatch = useDispatch();
   const items = useSelector(state => state.myContacts.items);
   const filter = useSelector(state => state.myContacts.filter);
+
+  const [createContact, result] = useCreateContactMutation();
+  const { data, error, isLoading } = useGetContactsQuery();
+  console.log(isLoading);
 
   const handleSubmit = (evt, actions) => {
     if (items.find(el => el.name === evt.name)) {
@@ -28,8 +36,15 @@ export function App() {
       name: evt.name,
       number: evt.number,
     };
+    const contacts = {
+      id: evt.name,
+      name: evt.name,
+      phone: evt.number,
+    };
 
     dispatch(addContact(contactInput));
+
+    dispatch(createContact(contacts));
 
     actions.resetForm();
   };
@@ -45,8 +60,16 @@ export function App() {
 
     return filteredArr;
   };
+  // const getFilterContacts = () => {
+  //   const filteredArr = items.filter(el =>
+  //     el.name.toLowerCase().includes(filter.toLowerCase())
+  //   );
+
+  //   return filteredArr;
+  // };
 
   const visibleContacts = getVisibleContacts();
+  // const getContacts = getFilterContacts();
 
   return (
     <div className={style.allForm}>
@@ -57,8 +80,8 @@ export function App() {
       />
       <h2>Contacts</h2>
       <Filter contact={items} filter={filter} changeFilter={changeFilter} />
-
-      <ContactList visibleContacts={visibleContacts} />
+      {!isLoading && <ContactList visibleContacts={visibleContacts} />}
+      {/* {!isLoading && <DeleteContact visibleContacts={visibleContacts} />} */}
     </div>
   );
 }
