@@ -13,7 +13,7 @@ export const Filter = ({ filter, changeFilter }) => {
         pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
         required
         value={filter}
-        onChange={changeFilter}
+        onChange={e => changeFilter(e.target.value)}
       />
     </>
   );

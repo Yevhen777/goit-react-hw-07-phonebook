@@ -1,24 +1,19 @@
 import { nanoid } from 'nanoid';
 import style from './ContactForm.module.css';
-// import { deleteContact } from '../redux/store';
-import { useDispatch } from 'react-redux';
-import { useDeleteContactMutation } from '../redux/getContact';
-import { useGetContactsQuery } from '../redux/getContact';
-export const ContactList = ({ visibleContacts }) => {
-  const { data, error, isLoading } = useGetContactsQuery();
-  const dispatch = useDispatch();
+import { useDeleteContactMutation } from '../redux/store';
 
+export const ContactList = ({ visibleContacts }) => {
   const [deleteContact] = useDeleteContactMutation();
 
   return (
     <ul>
-      {data.map(contact => {
+      {visibleContacts.map(contact => {
         return (
           <li className={style.addContact} key={nanoid()}>
             {contact.name}: {contact.number}
             <button
               className={style.btn}
-              onClick={() => dispatch(visibleContacts(contact.id))}
+              onClick={() => deleteContact(contact.id)}
               type="button"
             >
               Delete

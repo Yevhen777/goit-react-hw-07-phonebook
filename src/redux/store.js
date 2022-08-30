@@ -1,75 +1,72 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { createSlice } from '@reduxjs/toolkit';
-// import { persistStore, persistReducer } from 'redux-persist';
-// import storage from 'redux-persist/lib/storage';
-// import {
-//   FLUSH,
-//   REHYDRATE,
-//   PAUSE,
-//   PERSIST,
-//   PURGE,
-//   REGISTER,
-// } from 'redux-persist';
-import { contactsApi } from './getContact';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export const counterSlice = createSlice({
-  name: 'user',
-  initialState: {
-    items: [
-      // {
-      //   createdAt: '2022-08-23T01:11:14.940Z',
-      //   name: 'Antonia Kovacek II',
-      //   phone: '1-263-329-5513',
-      //   id: '1',
-      // },
-    ],
-    filter: '',
-  },
-  reducers: {
-    addContact(state, action) {
-      state.items.push(action.payload);
-    },
-
-    filteredItems(state, action) {
-      state.filter = action.payload;
-    },
-    deleteContact(state, action) {
-      const filteredContacts = state.items.filter(
-        contactEl => contactEl.id !== action.payload
-      );
-      return { ...state, items: filteredContacts };
-    },
-  },
+export const contactsApi = createApi({
+  reducerPath: 'contacts',
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'https://62fdfb2a41165d66bfb58828.mockapi.io',
+  }),
+  tagTypes: ['Contacts'],
+  endpoints: builder => ({
+    getContacts: builder.query({
+      query: () => `/contacts`,
+      providesTags: ['Contacts'],
+    }),
+    createContact: builder.mutation({
+      query: value => ({
+        url: `/contacts`,
+        method: 'POST',
+        body: value,
+      }),
+      invalidatesTags: ['Contacts'],
+    }),
+    deleteContact: builder.mutation({
+      query: id => ({
+        url: `/contacts/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Contacts'],
+    }),
+  }),
 });
-
-export const { addContact, filteredItems, deleteContact } =
-  counterSlice.actions;
-
-// const persistConfig = {
-//   key: 'root',
-//   storage,
-// };
-// const persistContactReducer = persistReducer(
-//   persistConfig,
-//   counterSlice.reducer
-// );
 
 export const store = configureStore({
   reducer: {
-    myContacts: counterSlice.reducer,
-    // myContacts: persistContactReducer,
-
     [contactsApi.reducerPath]: contactsApi.reducer,
   },
-  // middleware: getDefaultMiddleware =>
-  //   getDefaultMiddleware({
-  //     serializableCheck: {
-  //       ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-  //     },
-  //   }),
 
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware().concat(contactsApi.middleware),
 });
 
-// export const persistor = persistStore(store);
+export const {
+  useGetContactsQuery,
+  useCreateContactMutation,
+  useDeleteContactMutation,
+} = contactsApi;
+
+// export const counterSlice = createSlice({
+//   name: 'user',
+//   initialState: {
+//     items: [],
+//     filter: '',
+//   },
+//   reducers: {
+//     addContact(state, action) {
+//       state.items.push(action.payload);
+//     },
+
+//     filteredItems(state, action) {
+//       state.filter = action.payload;
+//     },
+//     deleteContact(state, action) {
+//       const filteredContacts = state.items.filter(
+//         contactEl => contactEl.id !== action.payload
+//       );
+//       return { ...state, items: filteredContacts };
+//     },
+//   },
+// });
+
+// export const { addContact, filteredItems, deleteContact } =
+//   counterSlice.actions;
