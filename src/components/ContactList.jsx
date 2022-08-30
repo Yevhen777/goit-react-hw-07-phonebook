@@ -24,5 +24,3 @@ export const ContactList = ({ visibleContacts }) => {
     </ul>
   );
 };
-
-let all;
