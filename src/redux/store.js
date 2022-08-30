@@ -44,29 +44,3 @@ export const {
   useCreateContactMutation,
   useDeleteContactMutation,
 } = contactsApi;
-
-// export const counterSlice = createSlice({
-//   name: 'user',
-//   initialState: {
-//     items: [],
-//     filter: '',
-//   },
-//   reducers: {
-//     addContact(state, action) {
-//       state.items.push(action.payload);
-//     },
-
-//     filteredItems(state, action) {
-//       state.filter = action.payload;
-//     },
-//     deleteContact(state, action) {
-//       const filteredContacts = state.items.filter(
-//         contactEl => contactEl.id !== action.payload
-//       );
-//       return { ...state, items: filteredContacts };
-//     },
-//   },
-// });
-
-// export const { addContact, filteredItems, deleteContact } =
-//   counterSlice.actions;
